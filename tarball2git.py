@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 """Simple Python script to take a set of versioned tar balls and import them into a git repository
 
+Copyright 2011 Peter Cock, released under GPL v3 licence.
+
 Source code for this script is being tracked in git on github here:
 https://github.com/peterjc/tarball2git
 
