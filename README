@@ -1,0 +1,3 @@
+This is a simple Python script to take a set of tar balls
+(e.g. the official releases from a software tool) and use
+them to populate a basic git repository.
