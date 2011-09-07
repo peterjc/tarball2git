@@ -8,7 +8,6 @@ https://github.com/peterjc/tarball2git
 
 TODO:
  - Command line API
- - Handle removal of files between tarballs
  - Handle alpha/beta/release candidate naming? 
 """
 import sys
@@ -62,20 +61,37 @@ def get_date(folder):
             dates.append(os.path.getmtime(os.path.join(root, f)))
     return max(dates)
 
-for major, minor, revision, f in tarballs:
+def get_missing(new_dir):
+    for root, dirs, files in os.walk("."):
+        if root.startswith(os.path.join(".", ".git")):
+            continue
+        if root.startswith(os.path.join(".", new_dir)):
+            continue
+        for f in files:
+            old = os.path.join(root, f)
+            #Assume up one directory...
+            new = os.path.join(new_dir, old)
+            if not os.path.isfile(new):
+                yield old
+
+for major, minor, revision, tarball in tarballs:
     values = {"major":major, "minor":minor, "revision":revision}
     tag = tag_pattern % values
     dir = dir_pattern % values
-    tarball = os.path.join(tarball_path, f)
+    full_tarball = os.path.join(tarball_path, tarball)
     print tag
-    run("tar -zxvf %s" % tarball)
+    run("tar -zxvf %s" % full_tarball)
     assert os.path.isdir(dir)
     commit_date = get_date(dir)
+    removed_files = list(get_missing(dir))
+    print "%i files removed: %s" % (len(removed_files), ", ".join(removed_files))
     run("mv %s/* ." % dir)
     os.rmdir(dir)
     repo.index.add(repo.untracked_files)
+    if removed_files:
+        repo.index.remove(removed_files)
     repo.git.commit("-a",
-                    "-m", 'Committing %s' % f,
+                    "-m", 'Committing %s' % tarball,
                     "--author", '"%s"' % author,
                     "--date", commit_date)
     repo.git.tag(tag)
