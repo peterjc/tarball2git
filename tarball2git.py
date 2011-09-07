@@ -74,7 +74,8 @@ for major, minor, revision, f in tarballs:
     run("mv %s/* ." % dir)
     os.rmdir(dir)
     repo.index.add(repo.untracked_files)
-    repo.git.commit("-m", 'Committing %s' % f,
+    repo.git.commit("-a",
+                    "-m", 'Committing %s' % f,
                     "--author", '"%s"' % author,
                     "--date", commit_date)
     repo.git.tag(tag)
