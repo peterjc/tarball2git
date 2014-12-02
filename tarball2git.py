@@ -77,16 +77,16 @@ def get_missing(new_dir):
 for major, minor, revision, tarball in tarballs:
     values = {"major":major, "minor":minor, "revision":revision}
     tag = tag_pattern % values
-    dir = dir_pattern % values
+    directory = dir_pattern % values
     full_tarball = os.path.join(tarball_path, tarball)
     print tag
     run("tar -zxvf %s" % full_tarball)
-    assert os.path.isdir(dir)
-    commit_date = get_date(dir)
-    removed_files = list(get_missing(dir))
+    assert os.path.isdir(directory)
+    commit_date = get_date(directory)
+    removed_files = list(get_missing(directory))
     print "%i files removed: %s" % (len(removed_files), ", ".join(removed_files))
-    run("mv %s/* ." % dir)
-    os.rmdir(dir)
+    run("mv %s/* ." % directory)
+    os.rmdir(directory)
     repo.index.add(repo.untracked_files)
     if removed_files:
         repo.index.remove(removed_files)
