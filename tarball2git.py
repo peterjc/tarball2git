@@ -79,12 +79,12 @@ for major, minor, revision, tarball in tarballs:
     tag = tag_pattern % values
     directory = dir_pattern % values
     full_tarball = os.path.join(tarball_path, tarball)
-    print tag
+    print(tag)
     run("tar -zxvf %s" % full_tarball)
     assert os.path.isdir(directory)
     commit_date = get_date(directory)
     removed_files = list(get_missing(directory))
-    print "%i files removed: %s" % (len(removed_files), ", ".join(removed_files))
+    print("%i files removed: %s" % (len(removed_files), ", ".join(removed_files)))
     run("mv %s/* ." % directory)
     os.rmdir(directory)
     repo.index.add(repo.untracked_files)
